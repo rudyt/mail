@@ -78,9 +78,9 @@ function load_mailbox(mailbox) {
             else is_read = "";
           } else is_read = "";
           var item = document.createElement("div");
-          item.className = `card   ${is_read} my-1 items`;
+          item.className = `border border-primary ${is_read}`;
   
-          item.innerHTML = `<div class="card-body" id="item-${element.id}">
+          item.innerHTML = `<div id="item-${element.id}">
           
           ${element.subject} | ${sender_recipients} | ${element.timestamp}
           <br>
@@ -102,8 +102,8 @@ function show_mail(id, mailbox) {
       console.log(email);
       document.querySelector("#emails-view").innerHTML = "";
       var item = document.createElement("div");
-      item.className = `card`;
-      item.innerHTML = `<div class="card-body" style="white-space: pre-wrap;">
+      item.className = `border border-primary`;
+      item.innerHTML = `<div>
   Sender: ${email.sender}
   Recipients: ${email.recipients}
   Subject: ${email.subject}
@@ -113,7 +113,7 @@ function show_mail(id, mailbox) {
       document.querySelector("#emails-view").appendChild(item);
       if (mailbox == "sent") return;
       let archive = document.createElement("btn");
-      archive.className = `btn btn-outline-info my-2`;
+      archive.className = `btn btn-sm btn-outline-primary`;
       archive.addEventListener("click", () => {
         archive_unarchive(id, email.archived);
         if (archive.innerText == "Archive") archive.innerText = "Unarchive";
@@ -124,13 +124,13 @@ function show_mail(id, mailbox) {
       document.querySelector("#emails-view").appendChild(archive);
 
       let reply = document.createElement("btn");
-      reply.className = `btn btn-outline-success m-2`;
+      reply.className = `btn btn-sm btn-outline-primary`;
       reply.textContent = "Reply";
       reply.addEventListener("click", () => {
         reply_mail(email.sender, email.subject, email.body, email.timestamp);
       });
       document.querySelector("#emails-view").appendChild(reply);
-      make_read(id);
+      mark_read(id);
     });
 }
 
@@ -146,7 +146,7 @@ function archive_unarchive(id, state) {
     );
 }
 
-function make_read(id) {
+function mark_read(id) {
   fetch(`/emails/${id}`, {
     method: "PUT",
     body: JSON.stringify({
@@ -158,8 +158,8 @@ function make_read(id) {
 function reply_mail(sender, subject, body, timestamp) {
   compose_email();
   var recolon = new RegExp("Re:");
-  var recolthere = recolthere.test(subject)
-  if (!recolthere) subject = `Re: ${subject}`;
+  var recolonthere = recolon.test(subject)
+  if (!recolonthere) subject = `Re: ${subject}`;
   document.querySelector("#compose-recipients").value = sender;
   document.querySelector("#compose-subject").value = subject;
 
