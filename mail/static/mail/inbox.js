@@ -115,7 +115,7 @@ function show_mail(id, mailbox) {
       let archive = document.createElement("btn");
       archive.className = `btn btn-outline-info my-2`;
       archive.addEventListener("click", () => {
-        toggle_archive(id, email.archived);
+        archive_unarchive(id, email.archived);
         if (archive.innerText == "Archive") archive.innerText = "Unarchive";
         else archive.innerText = "Archive";
       });
@@ -134,13 +134,16 @@ function show_mail(id, mailbox) {
     });
 }
 
-function toggle_archive(id, state) {
+function archive_unarchive(id, state) {
   fetch(`/emails/${id}`, {
     method: "PUT",
     body: JSON.stringify({
       archived: !state,
     }),
-  });
+  })
+  .then(
+   load_mailbox("inbox")
+    );
 }
 
 function make_read(id) {
@@ -154,11 +157,13 @@ function make_read(id) {
 
 function reply_mail(sender, subject, body, timestamp) {
   compose_email();
-  if (!/^Re:/.test(subject)) subject = `Re: ${subject}`;
+  var recolon = new RegExp("Re:");
+  var recolthere = recolthere.test(subject)
+  if (!recolthere) subject = `Re: ${subject}`;
   document.querySelector("#compose-recipients").value = sender;
   document.querySelector("#compose-subject").value = subject;
 
-  pre_fill = `On ${timestamp} ${sender} wrote:\n${body}\n`;
+  pre_fill = `\n\n\nOn ${timestamp} ${sender} wrote:\n${body}\n`;
 
   document.querySelector("#compose-body").value = pre_fill;
 }
